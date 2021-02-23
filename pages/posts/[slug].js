@@ -10,36 +10,37 @@ export default function Post({postData}) {
   if (router.isFallback) {
     return <div>Loading...</div>
   }
+  const data = postData[0];
   return (
     <Layout>
       <Head>
-        <title>{postData.title}</title>
+        <title>{data.title.rendered}</title>
       </Head>
       <article>
-        <h1 className={utilStyles.headingXl}>{postData.title}</h1>
+        <h1 className={utilStyles.headingXl}>{data.title.rendered}</h1>
         <div className={utilStyles.lightText}>
-          <Date dateString={postData.date} />
+          <Date dateString={data.date} />
         </div>
-        <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
+        <div dangerouslySetInnerHTML={{ __html: data.content.rendered }} />
       </article>
     </Layout>
   );
 }
 
 export async function getStaticProps({params}) {
-  const postData = await getPostData(params.id);
-  
+  const postData = await getPostData(params.slug);
   return {
     props: {
-      postData,
-    }
+      postData: postData,
+    },
+    revalidate: 10,
   }
 }
 
 export async function getStaticPaths() {
-  const paths = getAllPostIds();
+  // const paths = getAllPostIds();
   return {
-    paths,
+    paths: [],
     fallback: true,
   };
 }
