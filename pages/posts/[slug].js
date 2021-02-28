@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import {useTranslation} from 'next-i18next';
 import Layout from '../../components/layout'
 import { getAllPostIds, getPostData } from '../../lib/posts';
 import Date from '../../components/date';
@@ -6,6 +8,7 @@ import { useRouter } from 'next/router'
 import utilStyles from '../../styles/utils.module.css';
 
 export default function Post({postData}) {
+  const {t} = useTranslation();
   const router = useRouter();
   if (router.isFallback) {
     return <div>Loading...</div>
@@ -16,6 +19,7 @@ export default function Post({postData}) {
       <Head>
         <title>{data.title.rendered}</title>
       </Head>
+      <p>{t('description')}</p>
       <article>
         <h1 className={utilStyles.headingXl}>{data.title.rendered}</h1>
         <div className={utilStyles.lightText}>
@@ -27,11 +31,12 @@ export default function Post({postData}) {
   );
 }
 
-export async function getStaticProps({params}) {
+export async function getStaticProps({params, locale}) {
   const postData = await getPostData(params.slug);
   return {
     props: {
       postData: postData,
+      ...await serverSideTranslations(locale, ['common']),
     },
     revalidate: 10,
   }

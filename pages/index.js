@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import {useTranslation} from 'next-i18next';
 import Date from '../components/date';
 import Layout, { siteTitle } from '../components/layout';
 import {getSortedPostsData} from '../lib/posts';
@@ -10,17 +12,19 @@ import WPAPI from 'wpapi';
 // const wp = new WPAPI({endpoint: 'https://bachhoaso.vn/wp-json'});
 const wp = new WPAPI({endpoint: 'https://todayilearn45214567.wordpress.com/wp-json'});
 
-export async function getStaticProps() {
+export async function getStaticProps({locale}) {
   const allPostsData = await getSortedPostsData();
   return {
     props: {
       allPostsData,
+      ...await serverSideTranslations(locale, ['common']),
     },
     revalidate: 10,
   }
 }
 
 export default function Home({allPostsData}) {
+  const {t: trans} = useTranslation('common');
   return (
     <Layout home>
       <Head>
@@ -32,6 +36,9 @@ export default function Home({allPostsData}) {
           (This is a sample website - you’ll be building a site like this on{' '}
           <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
         </p>
+      </section>
+      <section>
+        <p>{trans('description')}</p>
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>

@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './layout.module.css'
+import {useTranslation} from 'next-i18next';
 import utilStyles from '../styles/utils.module.css'
 
 
@@ -9,7 +10,7 @@ const name = 'Minh Luong'
 export const siteTitle = 'Next.js Sample Website'
 
 export default function Layout({children, home}) {
-  
+  const {t: trans} = useTranslation('common');
   return (
     <div className={styles.container}>
       <Head>
@@ -59,6 +60,7 @@ export default function Layout({children, home}) {
                 <a className={utilStyles.colorInherit}>{name}</a>
               </Link>
             </h2>
+            <p>{trans('description')}</p>
           </>
         )}
       </header>
